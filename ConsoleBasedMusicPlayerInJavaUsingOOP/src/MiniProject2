@@ -1,0 +1,83 @@
+Project Title: 
+Console-Based Music Player in Java Using OOP 
+
+Objective: 
+Build a menu-driven console application in Java that simulates a simple music 
+player using OOP concepts like Encapsulation, Abstraction, Inheritance, and 
+Polymorphism. It allows users to manage a library of songs, create playlists, 
+and play/pause/stop songs within playlists.
+
+ 
+Core OOP Concepts Demonstrated 
+Concept 
+Usage 
+Encapsulation Private fields and public getters/setters in classes like Song 
+Abstraction 
+Inheritance 
+Playable interface to abstract playback operations 
+Playlist implements Playable 
+Polymorphism Interface methods overridden in Playlist 
+Collections 
+ArrayList used to manage songs and playlists dynamically 
+
+Class Breakdown 
+Song Class 
+• Fields: songId, title, artist, duration 
+• Purpose: Encapsulates a song entity 
+• Key Methods: Constructor, Getters/Setters, toString() 
+
+
+Playable Interface 
+• Methods: 
+o void play(String title) 
+o void play(int songId) 
+o void pause(String title) 
+o void pause(int songId) 
+o void stop(String title) 
+o void stop(int songId) 
+• Purpose: Abstract playback behavior for any class that implements it. 
+
+
+Playlist Class (implements Playable) 
+• Fields: playlistId, playlistName, List<Song> 
+• Purpose: Represents a playlist of songs with playback control 
+• Key Methods: 
+o addSong(Song) 
+o removeSong(String/int) 
+o displaySongs() 
+o Implementations for play(), pause(), stop() 
+
+
+MusicPlayer Class 
+• Fields: List<Song> allSongs, List<Playlist> playlists 
+• Purpose: Manages song library and playlists. 
+• Key Methods: 
+o addSong(Song) 
+o updateSong(String, Song) 
+o deleteSong(String) 
+o displayAllSongs() 
+o createPlaylist(String) 
+o addSongToPlaylist(String, Song) 
+o deletePlaylist(String) 
+o playPlaylist(String) 
+o getPlaylist(String) 
+o displayAllPlaylists() 
+
+
+Menu-Driven Application – Main Class 
+Here’s how the menu system looks in the console: 
+
+========= MUSIC PLAYER MENU ========= 
+1. Add New Song 
+2. Update Existing Song 
+3. Delete Song 
+4. Display All Songs 
+5. Create New Playlist 
+6. Add Song to Playlist 
+7. Display All Playlists 
+8. Display Songs in Playlist 
+9. Play Song in Playlist 
+10. Pause Song in Playlist 
+11. Stop Song in Playlist 
+12. Exit 
+Enter your choice: 
