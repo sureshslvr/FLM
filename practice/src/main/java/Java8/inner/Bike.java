@@ -1,4 +1,4 @@
-package inner;
+package Java8.inner;
 
 public class Bike implements Vehicle {
     @Override

@@ -1,4 +1,4 @@
-package functionalinterfaceex;
+package Java8.functionalinterfaceex;
 
 public class Impl implements Interface1,Interface2{
     @Override

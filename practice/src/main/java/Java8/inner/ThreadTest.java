@@ -1,4 +1,4 @@
-package inner;
+package Java8.inner;
 
 public class ThreadTest {
 //    Thread th1=new ThreadImpl();
