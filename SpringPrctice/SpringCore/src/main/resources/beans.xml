@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Bean definitions go here -
+    we will use property tag and constructor-arg setting the values of fields-->
+    <bean id="st" class="org.example.Student">
+        <property name="id" value="1"/>
+        <property name="name" value="nani"/>
+    </bean>
+    <bean id="st2" class="org.example.Student">
+        <constructor-arg value="2"/>
+        <constructor-arg value="Suresh"/>
+    </bean>
+
+</beans>
