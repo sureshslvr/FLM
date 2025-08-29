@@ -6,26 +6,88 @@
 
     <!-- Bean definitions go here -
     we will use property tag and constructor-arg setting the values of fields-->
-    <bean id="st" class="org.example.Student">
-        <!-- property tag calls the setter method to set the value if setter name is diff we will get error
+    <!--auto wire can be done in 3 ways(bytype,Byname,Byconstructor)-->
+    <!--Byname will check id of the bean with field name in class
+        ByType will ckeck of type of the class
+        ByConstructors will check for constructor type bean-->
+
+
+    <!--<bean id="st" class="org.example.Student" autowire="byName">
+        &lt;!&ndash; property tag calls the setter method to set the value if setter name is diff we will get error
         like if change id to IID in setter
         WARNING: Exception encountered during context initialization
         - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException:
         Error creating bean with name 'st' defined in class path resource [beans.xml]:
         Invalid property 'id' of bean class [org.example.Student]:
-        Bean property 'id' is not writable or has an invalid setter method. Did you mean 'IId'?-->
+        Bean property 'id' is not writable or has an invalid setter method. Did you mean 'IId'?&ndash;&gt;
         <property name="id" value="1"/>
         <property name="name" value="nani"/>
-    </bean>
+        &lt;!&ndash;<property name="address" ref="address"/>
+         dev may forget to add this, we will get null object to address
+         to remove this dependency injection problem we will use autowired concept that we can mention in bean&ndash;&gt;
+    </bean>-->
 
-    <bean id="st2" class="org.example.Student">
+
+
+    <!--address bean used here to demonstrated dependency injection-->
+    <!--<bean id="address" class="org.example.Address">
+        <property name="street" value="marketroad"/>
+        <property name="area" value="mothiNagar"/>
+    </bean>-->
+
+    <bean id="st2" class="org.example.Student" autowire="constructor">
 
         <!-- for using and setting values through constructor args we need follow the exact order as how parameterized constructor declared
         and parameterized constructor is mandatory for doing this
         If you don't want to follow the order then you should mention index tag before value
         eg:  <constructor-arg index="1" value="2"/>  -->
-        <constructor-arg value="2"/>
-        <constructor-arg value="Suresh"/>
+        <constructor-arg index="0" value="2"/>
+        <constructor-arg index="1" value="Suresh"/>
+        <!--<constructor-arg ref="address"/>-->
+    </bean>
+
+    <bean id="address1" class="org.example.Address">
+        <constructor-arg value="pr naagr"/>
+        <constructor-arg value="pr nagar"/>
+    </bean>
+
+    <!-- using emp object we can get idea how to use collection here-->
+    <!--<bean id="emp" class="org.example.Employee">
+        <property name="id" value="1"/>
+        <property name="name" value="Suresh"/>
+        <property name="skills">
+            <list>
+                <value>java</value>
+                <value>Spring boot</value>
+                <value>sql</value>
+            </list>
+        </property>
+    </bean>-->
+
+    <!--<bean id="emp" class="org.example.Employee">
+        <property name="id" value="1"/>
+        <property name="name" value="Suresh"/>
+        <property name="skills">
+            <set>
+                <value>java</value>
+                <value>Spring boot</value>
+                <value>sql</value>
+                <value>sql</value>
+            </set>
+        </property>
+    </bean>-->
+
+    <bean id="emp" class="org.example.Employee">
+        <property name="id" value="1"/>
+        <property name="name" value="Suresh"/>
+        <property name="skills">
+            <map>
+                <entry key="1" value="java"/>
+                <entry key="2" value="spring"/>
+                <entry key="3" value="sql"/>
+                <entry key="3" value="mysql"/>
+            </map>
+        </property>
     </bean>
 
 </beans>

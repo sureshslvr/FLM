@@ -16,16 +16,22 @@ public class App
         //spring by default follows single ton design pattern internal,
         // we will get same object if we get object more than once also
         ApplicationContext applicationContext=new ClassPathXmlApplicationContext("beans.xml");
-        System.out.println("context loaded");
-        Student student=applicationContext.getBean("st",Student.class);
+        Employee e=applicationContext.getBean("emp",Employee.class);
+        System.out.println(e);
+
+        student(applicationContext);
+
+    }
+
+    private static void student(ApplicationContext applicationContext) {
+        /*Student student= applicationContext.getBean("st",Student.class);
         System.out.println(student);
-        Student student2=applicationContext.getBean("st",Student.class);
+        Student student2= applicationContext.getBean("st",Student.class);
         System.out.println(student2.hashCode());
-        System.out.println(student==student2);
+        System.out.println(student==student2);*/
 
         //using constructor args
-        Student student3=applicationContext.getBean("st2",Student.class);
+        Student student3= applicationContext.getBean("st2",Student.class);
         System.out.println(student3);
-
     }
 }
