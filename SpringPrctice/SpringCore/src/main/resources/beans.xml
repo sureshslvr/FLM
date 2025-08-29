@@ -7,10 +7,23 @@
     <!-- Bean definitions go here -
     we will use property tag and constructor-arg setting the values of fields-->
     <bean id="st" class="org.example.Student">
+        <!-- property tag calls the setter method to set the value if setter name is diff we will get error
+        like if change id to IID in setter
+        WARNING: Exception encountered during context initialization
+        - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException:
+        Error creating bean with name 'st' defined in class path resource [beans.xml]:
+        Invalid property 'id' of bean class [org.example.Student]:
+        Bean property 'id' is not writable or has an invalid setter method. Did you mean 'IId'?-->
         <property name="id" value="1"/>
         <property name="name" value="nani"/>
     </bean>
+
     <bean id="st2" class="org.example.Student">
+
+        <!-- for using and setting values through constructor args we need follow the exact order as how parameterized constructor declared
+        and parameterized constructor is mandatory for doing this
+        If you don't want to follow the order then you should mention index tag before value
+        eg:  <constructor-arg index="1" value="2"/>  -->
         <constructor-arg value="2"/>
         <constructor-arg value="Suresh"/>
     </bean>
