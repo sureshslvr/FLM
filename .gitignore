@@ -36,3 +36,20 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+
+# Ignore build output folders
+/bin/
+/target/
+
+# Ignore IntelliJ IDEA config files
+/.idea/
+/*.iml
+
+# Ignore class files
+*.class
+
+# Ignore other OS-specific files
+Thumbs.db
+
+ConsoleBasedMusicPlayerInJavaUsingOOP/bin/                                                                                                               practice/.gitignore                                                                                                                                      practice/.idea/
