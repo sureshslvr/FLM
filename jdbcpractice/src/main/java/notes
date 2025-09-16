@@ -1,0 +1,106 @@
+JDBC steps using statement(old style):
+step1: register the driver(optional)
+        Class.forName("com.mysql.cj.jdbc.Driver");
+
+step2: establish connection
+        String url="jdbc:mysql://127.0.0.1:3306/employee_db";
+        String user="root";
+        String pass="root";
+        Connection connection = DriverManager.getConnection(url, user, pass);
+
+step3: create statement
+        Statement statement = connection.createStatement();
+
+step4: prepare query
+         String query="insert into employees value(4,'suresh','junior dev',30000)";
+
+step5:execute
+         statement.executeUpdate(query);
+
+step6:close resources
+
+note: with sql statement we have sql injection problem, to Over come that java introduced prepared statement
+
+SQL injection problem:
+   When preparing a query with dynamic values in a statement, a common mistake is to **concatenate user input directly** into the SQL string.
+
+   Example (❌ vulnerable to SQL injection):
+
+   ```java
+   String query = "SELECT * FROM users WHERE username='" + username + "' AND password='" + password + "'";
+   ```
+
+   ⚠️ **Problem:**
+   If an attacker enters malicious input, like
+
+   ```text
+   username = "admin' --"
+   password = "anything"
+   ```
+
+   The final query becomes:
+
+   ```sql
+   SELECT * FROM users WHERE username='admin' --' AND password='anything';
+   ```
+
+   Here, `--` comments out the rest of the query, so the attacker logs in as `admin` without needing the correct password.
+
+   ---
+
+   ### How to Prevent SQL Injection
+
+   ✅ **Use Prepared Statements (Parameterized Queries):**
+   Instead of concatenating, pass user inputs as parameters.
+
+   ```java
+   String query = "SELECT * FROM users WHERE username=? AND password=?";
+   PreparedStatement pstmt = connection.prepareStatement(query);
+   pstmt.setString(1, username);
+   pstmt.setString(2, password);
+
+   ResultSet rs = pstmt.executeQuery();
+   ```
+
+   * `?` placeholders ensure user input is treated as **data**, not executable SQL.
+   * The database driver safely escapes values, preventing injection.
+
+   ---
+
+   ### Additional Best Practices
+
+   1. **Never concatenate user input into SQL strings.**
+   2. **Use ORM frameworks** (like Hibernate, JPA, Spring Data JPA) where possible.
+   3. **Apply input validation** (allow only expected characters/length).
+   4. **Use least privilege database accounts** (limit `INSERT/DELETE/DROP` rights).
+   5. **Enable logging & monitoring** for suspicious queries.
+
+   ---
+
+   👉 In summary:
+   Dynamic concatenation = ❌ SQL Injection risk
+   Prepared statements = ✅ Safe & recommended
+
+JDBC steps using prepared statement:
+
+step1: register the driver(optional)
+        Class.forName("com.mysql.cj.jdbc.Driver");
+
+step2: establish connection
+        String url="jdbc:mysql://127.0.0.1:3306/employee_db";
+        String user="root";
+        String pass="root";
+        Connection connection = DriverManager.getConnection(url, user, pass);
+
+step3: prepare query
+    String query = "SELECT * FROM users WHERE username=? AND password=?";
+
+step4: create statement
+   PreparedStatement pstmt = connection.prepareStatement(query);
+   pstmt.setString(1, username);
+   pstmt.setString(2, password);
+
+step5:execute
+   ResultSet rs = pstmt.executeQuery();
+
+step6:close resources
