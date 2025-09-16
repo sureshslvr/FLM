@@ -83,10 +83,19 @@ Named Queries: like stored procedure
   
 Mappings: we have four type of mappings, we use has a relationship here
     1. One to One:  
+        unidirectional one to one: 
         user->passport(one user had one passport only)
         user and passort are seperate classes and we use Has a Relationship
         annotate @OneToOne over passport field in user class and @joinCoumn(name="pass_id") to create a forign key bw user and passport
+        inside OnetoOne brackets we need to use cascasding to persitst or save passpost object before user as it is using forign key
+        ex: @OneToOne(Casecade = caseCadetype.Persists)
 
+        biDirectional One to One:
+        if you try to access user details form passport we dont get bcz it unidirectional,
+        to make bidirection add user in passport as has a relation and add annotation @OneToOne(mappedBy="passPort")// mapped by means refer the user 
+        use two classes instance varible and set user and passport using setter methods 
+        and get user detail using getter method of passport
+        
     2. One to Many:
         User->Order( one user  can have many order)
     3. Many to One:
