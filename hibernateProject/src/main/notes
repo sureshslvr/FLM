@@ -1,4 +1,6 @@
 Hibernate notes:
+Hibernate is an ORM (Object Relational Mapping) framework in Java used to map Java objects to relational database tables, reducing boilerplate SQL code and managing data persistence.
+
 need two dependencies mysql connector j and hibernate core ORM
 
 steps:
@@ -98,12 +100,152 @@ Mappings: we have four type of mappings, we use has a relationship here
         and get person detail using getter method of passport
         
     2. One to Many:
-        User->Order( one person  can have many orders)
+        Person->Order( one person  can have many orders)
     3. Many to One:
-        Order->User( many orders can placed by one User)
+        Order->Person( many orders can placed by one Person)
+
+
+        ### 🔃 Relationship Type:
+
+        * This is a **bi-directional** relationship:
+
+          * `Person → Orders` → **One-to-Many**
+          * `Order → Person` → **Many-to-One**
+
+        ---
+
+        ### 🔹 Classes Involved:
+
+        * `Person` (Parent)
+        * `Order` (Child)
+
+        ---
+
+        ### 🔸 Step-by-Step Implementation:
+
+        #### ✅ In `Person` class (One-to-Many side):
+
+        ```java
+        @OneToMany(mappedBy = "person", cascade = CascadeType.ALL)
+        private List<Order> orders;
+        ```
+
+        * `mappedBy = "person"` → refers to the field name in `Order` class
+        * `CascadeType.ALL` → ensures all operations (persist, delete, etc.) cascade to child `Order` objects
+
+        ---
+
+        #### ✅ In `Order` class (Many-to-One side):
+
+        ```java
+        @ManyToOne
+        @JoinColumn(name = "personId")
+        private Person person;
+        ```
+
+        * `@JoinColumn` creates a **foreign key column** (`personId`) in the `Order` table
+        * This makes the `Order` side the **owning side** of the relationship
+
+        ---
+
+        ### 📦 Table Structure:
+
+        **Table: Person**
+
+        | personId | username |
+        | -------- | -------- |
+        | 1        | suresh   |
+
+        **Table: Order**
+
+        | orderId | productName | quantity | personId |
+        | ------- | ----------- | -------- | -------- |
+        | 1       | mobile      | 1        | 1        |
+        | 2       | laptop      | 3        | 1        |
+
+        ---
+
+        ### 🧪 How It Works:
+
+        1. Create `Person` object.
+        2. Create multiple `Order` objects.
+        3. Set the `person` for each `Order` using `order.setPerson(person)`
+        4. Add `Order` list to `person.setOrders(orderList)`
+        5. Persist only the `Person` — Hibernate cascades to `Order`.
+
+        ---
+
+
     4. Many to Many:
         students -> multiple courses
         courses-> multiple students
+
+        * A **Trainee** can enroll in **multiple Courses**
+        * A **Course** can have **multiple Trainees**
+
+        ### 🔹 Tables Involved:
+
+        * `trainee`
+        * `course`
+        * A **join table**: `trainee_courses` (to maintain the association)
+
+        ---
+
+        ### 🔸 Unidirectional Many-to-Many:
+
+        Only one side (e.g., `Trainee`) knows about the relationship.
+
+        ```java
+        @ManyToMany
+        @JoinTable(name = "trainee_courses",
+                   joinColumns = @JoinColumn(name = "traineeID"),
+                   inverseJoinColumns = @JoinColumn(name = "courseID"))
+        private List<Course> courses;
+        ```
+
+        * `@JoinTable` creates the **intermediate mapping table**
+        * `joinColumns` → column in join table referring to current entity (`trainee`)
+        * `inverseJoinColumns` → column referring to the other entity (`course`)
+
+        > ✅ Use `CascadeType.ALL` if you want Hibernate to persist both `Trainee` and related `Courses` in one go.
+
+        ---
+
+        ### 🔸 Bidirectional Many-to-Many:
+
+        Both entities are aware of the relationship.
+
+        **In `Trainee` class:**
+
+        ```java
+        @ManyToMany(cascade = CascadeType.ALL)
+        @JoinTable(name = "trainee_courses",
+                   joinColumns = @JoinColumn(name = "traineeID"),
+                   inverseJoinColumns = @JoinColumn(name = "courseID"))
+        private List<Course> courses;
+        ```
+
+        **In `Course` class:**
+
+        ```java
+        @ManyToMany(mappedBy = "courses")  // 'courses' is the field in Trainee
+        private List<Trainee> trainees;
+        ```
+
+        > 🔄 `mappedBy` tells Hibernate that `Course` is the **inverse side** of the relationship and no separate join table should be created here.
+
+        ---
+
+        ### 🧪 How It Works:
+
+        1. You create `Trainee` and `Course` objects
+        2. Assign `List<Course>` to each `Trainee`
+        3. Assign `List<Trainee>` to each `Course`
+        4. Persist any one side (usually the owning side: `Trainee`) — Hibernate handles the join table
+
+        ---
+
+
 
 Lazy Mode: by default it will be in lazy mode only when find person we should get only person details not orders
             in lazy mode it wont fetch orders first if call getOrders() then again it will call db and fetch orders

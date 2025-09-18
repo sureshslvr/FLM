@@ -2,6 +2,8 @@ package org.example.util;
 
 
 import org.example.compositekey.Car;
+import org.example.mappings.manytomany.Course;
+import org.example.mappings.manytomany.Trainee;
 import org.example.mappings.onetomany_manytoone.Orders;
 import org.example.mappings.onetomany_manytoone.Person;
 import org.example.mappings.onetoone.PassPort;
@@ -25,6 +27,8 @@ public class HibernateUtil {
             configuration.addAnnotatedClass(Car.class);
             configuration.addAnnotatedClass(Person.class);
             configuration.addAnnotatedClass(Orders.class);
+            configuration.addAnnotatedClass(Course.class);
+            configuration.addAnnotatedClass(Trainee.class);
             sessionFactory=configuration.buildSessionFactory();
         }
         return sessionFactory;
