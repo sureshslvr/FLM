@@ -1,6 +1,8 @@
 package org.example.util;
 
 
+import org.example.mappings.onetoone.PassPort;
+import org.example.mappings.onetoone.User;
 import org.example.pojo.Employee;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -15,6 +17,8 @@ public class HibernateUtil {
             //configuration.configure("hibernate.cfg.xml");
             configuration.configure();
             configuration.addAnnotatedClass(Employee.class);
+            configuration.addAnnotatedClass(User.class);
+            configuration.addAnnotatedClass(PassPort.class);
             sessionFactory=configuration.buildSessionFactory();
         }
         return sessionFactory;

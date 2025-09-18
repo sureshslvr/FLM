@@ -14,6 +14,8 @@
     <!-- to show the query in console      -->
     <property name="show_sql">true</property>
    <!-- <property name="format_sql">true</property>-->
+
+      <property name="hbm2ddl.auto">update</property>
     <!--to remove mapping here in java you need to add configuration.addAnnotatedClass(Employees.class);-->
     <!--    <mapping class="org.example.util.Employees"/>-->
 

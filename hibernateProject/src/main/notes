@@ -77,6 +77,7 @@ Named Queries: like stored procedure
     execution will be faster here because precompiled query
     to do it add @NamedQuery annotation in Entity class and call that
     ex: @NamedQuery(name="allempl", query="from Employee") //Hql query
+    @NamedNativeQuery(name="allempl", query="select * from Employee", resultClass= Employee.class) //sql query
     session.createNamedQuery("allempl",Employee.class);
     
     if you want to write multiple named queries,we can write inside brackets of @NamedQueries({@NamedQuery(),@NamedQuery()})
@@ -87,7 +88,7 @@ Mappings: we have four type of mappings, we use has a relationship here
         user->passport(one user had one passport only)
         user and passport are seperate classes and we use Has a Relationship
         annotate @OneToOne over passport field in user class and @joinColumn(name="pass_id") to create a foreign key bw user and passport
-        inside OnetoOne brackets we need to use cascading to persist or save passport object before user as it is using forign key
+        inside OnetoOne brackets we need to use cascading to persist or save passport object before user as it is using foreign key
         ex: @OneToOne(Cascade = caseCadetype.Persists)
 
         biDirectional One to One:
@@ -103,12 +104,15 @@ Mappings: we have four type of mappings, we use has a relationship here
     4. Many to Many:
         students -> multiple courses
         courses-> multiple students
+
+Lazy Mode:
+Eager Mode:
         
 
 we don't use this ddl from java
 <property name="hbm2ddl.auto">create</property>:
     it will drop and create table so there is a data loss
-<property name="hbm2ddl.auto">update</property>:
+<property name="hbm2ddl.auto">update</property>
     it will create table if does not exist
     else update the data in existing table
 <property name="hbm2ddl.auto">create-drop</property>:
