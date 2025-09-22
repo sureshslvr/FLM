@@ -1,4 +1,6 @@
 Hibernate notes:
+Hibernate is an ORM (Object Relational Mapping) framework in Java used to map Java objects to relational database tables, reducing boilerplate SQL code and managing data persistence.
+
 need two dependencies mysql connector j and hibernate core ORM
 
 steps:
@@ -46,7 +48,7 @@ HQL:
         list = query.list();
         System.out.println(list);
 
-    for DML: insert,delete,Udpate
+    for DML: insert,delete,Update
         session.beginTransaction();
         query=session.createMutationQuery("Insert into Employee(column1,coulumn2,etc) values(?1,?2,?3));
         query.setParameter(1,"sjfj");
@@ -59,56 +61,201 @@ HQL:
 NativeQuery:
     original query - sql query
     this are same as HQL just method will change here
-    session.createNativeQuery() for dql opertaions
+    session.createNativeQuery() for dql operations
     session.createNativeMutationQuery() for DML operation
     here we need to write sql query here 
 
     ex:session.createNativeQuery("select * from employees",Employee.class)
 
-Note: In HQL we should give field/table name as per Entiti/pojo class
+Note: In HQL we should give field/table name as per Entity/pojo class
       In Native Query we need to give table and column names as per Sql dataBase
 
 Composite Primary key:
     its combination of two columns.
-    In hebernate to do this we will write them in seperate pojo class(@Embeddable) with Two columns that used in composite primary key
+    In hibernate to do this we will write them in separate pojo class(@Embeddable) with Two columns that used in composite primary key
     use that class as has relationship in Entity class and above filed add annotation @EmbeddedID
     
 Named Queries: like stored procedure
-    execution will be faster here becuase precompiled query
-    to do it add @NamedQurey annotation in Entity class and call that  
+    execution will be faster here because precompiled query
+    to do it add @NamedQuery annotation in Entity class and call that
     ex: @NamedQuery(name="allempl", query="from Employee") //Hql query
+    @NamedNativeQuery(name="allempl", query="select * from Employee", resultClass= Employee.class) //sql query
     session.createNamedQuery("allempl",Employee.class);
     
-    if you want to writte multiple named quries,we can write insite brackets of @NamedQueries({@NamedQuery(),@NamedQuery()})
+    if you want to write multiple named queries,we can write inside brackets of @NamedQueries({@NamedQuery(),@NamedQuery()})
   
 Mappings: we have four type of mappings, we use has a relationship here
     1. One to One:  
         unidirectional one to one: 
-        user->passport(one user had one passport only)
-        user and passort are seperate classes and we use Has a Relationship
-        annotate @OneToOne over passport field in user class and @joinCoumn(name="pass_id") to create a forign key bw user and passport
-        inside OnetoOne brackets we need to use cascasding to persitst or save passpost object before user as it is using forign key
-        ex: @OneToOne(Casecade = caseCadetype.Persists)
+        person->passport(one person had one passport only)
+        person and passport are seperate classes and we use Has a Relationship
+        annotate @OneToOne over passport field in person class and @joinColumn(name="pass_id") to create a foreign key bw person and passport
+        inside OnetoOne brackets we need to use cascading to persist or save passport object before person as it is using foreign key
+        ex: @OneToOne(Cascade = caseCadetype.Persists)
 
         biDirectional One to One:
-        if you try to access user details form passport we dont get bcz it unidirectional,
-        to make bidirection add user in passport as has a relation and add annotation @OneToOne(mappedBy="passPort")// mapped by means refer the user 
-        use two classes instance varible and set user and passport using setter methods 
-        and get user detail using getter method of passport
+        if you try to access person details form passport we don't get bcz it unidirectional,
+        to make bidirectional add person in passport as has a relation and add annotation @OneToOne(mappedBy="passPort")// mapped by means refer the person
+        use two classes instance variable and set person and passport using setter methods
+        and get person detail using getter method of passport
         
     2. One to Many:
-        User->Order( one user  can have many order)
+        Person->Order( one person  can have many orders)
     3. Many to One:
-        Order->User( many order can placed by one User)
+        Order->Person( many orders can placed by one Person)
+
+
+        ### 🔃 Relationship Type:
+
+        * This is a **bi-directional** relationship:
+
+          * `Person → Orders` → **One-to-Many**
+          * `Order → Person` → **Many-to-One**
+
+        ---
+
+        ### 🔹 Classes Involved:
+
+        * `Person` (Parent)
+        * `Order` (Child)
+
+        ---
+
+        ### 🔸 Step-by-Step Implementation:
+
+        #### ✅ In `Person` class (One-to-Many side):
+
+        ```java
+        @OneToMany(mappedBy = "person", cascade = CascadeType.ALL)
+        private List<Order> orders;
+        ```
+
+        * `mappedBy = "person"` → refers to the field name in `Order` class
+        * `CascadeType.ALL` → ensures all operations (persist, delete, etc.) cascade to child `Order` objects
+
+        ---
+
+        #### ✅ In `Order` class (Many-to-One side):
+
+        ```java
+        @ManyToOne
+        @JoinColumn(name = "personId")
+        private Person person;
+        ```
+
+        * `@JoinColumn` creates a **foreign key column** (`personId`) in the `Order` table
+        * This makes the `Order` side the **owning side** of the relationship
+
+        ---
+
+        ### 📦 Table Structure:
+
+        **Table: Person**
+
+        | personId | username |
+        | -------- | -------- |
+        | 1        | suresh   |
+
+        **Table: Order**
+
+        | orderId | productName | quantity | personId |
+        | ------- | ----------- | -------- | -------- |
+        | 1       | mobile      | 1        | 1        |
+        | 2       | laptop      | 3        | 1        |
+
+        ---
+
+        ### 🧪 How It Works:
+
+        1. Create `Person` object.
+        2. Create multiple `Order` objects.
+        3. Set the `person` for each `Order` using `order.setPerson(person)`
+        4. Add `Order` list to `person.setOrders(orderList)`
+        5. Persist only the `Person` — Hibernate cascades to `Order`.
+
+        ---
+
+
     4. Many to Many:
-        studednts -> mutliple courses
-        courses-> mutliple students
+        students -> multiple courses
+        courses-> multiple students
+
+        * A **Trainee** can enroll in **multiple Courses**
+        * A **Course** can have **multiple Trainees**
+
+        ### 🔹 Tables Involved:
+
+        * `trainee`
+        * `course`
+        * A **join table**: `trainee_courses` (to maintain the association)
+
+        ---
+
+        ### 🔸 Unidirectional Many-to-Many:
+
+        Only one side (e.g., `Trainee`) knows about the relationship.
+
+        ```java
+        @ManyToMany
+        @JoinTable(name = "trainee_courses",
+                   joinColumns = @JoinColumn(name = "traineeID"),
+                   inverseJoinColumns = @JoinColumn(name = "courseID"))
+        private List<Course> courses;
+        ```
+
+        * `@JoinTable` creates the **intermediate mapping table**
+        * `joinColumns` → column in join table referring to current entity (`trainee`)
+        * `inverseJoinColumns` → column referring to the other entity (`course`)
+
+        > ✅ Use `CascadeType.ALL` if you want Hibernate to persist both `Trainee` and related `Courses` in one go.
+
+        ---
+
+        ### 🔸 Bidirectional Many-to-Many:
+
+        Both entities are aware of the relationship.
+
+        **In `Trainee` class:**
+
+        ```java
+        @ManyToMany(cascade = CascadeType.ALL)
+        @JoinTable(name = "trainee_courses",
+                   joinColumns = @JoinColumn(name = "traineeID"),
+                   inverseJoinColumns = @JoinColumn(name = "courseID"))
+        private List<Course> courses;
+        ```
+
+        **In `Course` class:**
+
+        ```java
+        @ManyToMany(mappedBy = "courses")  // 'courses' is the field in Trainee
+        private List<Trainee> trainees;
+        ```
+
+        > 🔄 `mappedBy` tells Hibernate that `Course` is the **inverse side** of the relationship and no separate join table should be created here.
+
+        ---
+
+        ### 🧪 How It Works:
+
+        1. You create `Trainee` and `Course` objects
+        2. Assign `List<Course>` to each `Trainee`
+        3. Assign `List<Trainee>` to each `Course`
+        4. Persist any one side (usually the owning side: `Trainee`) — Hibernate handles the join table
+
+        ---
+
+
+
+Lazy Mode: by default it will be in lazy mode only when find person we should get only person details not orders
+            in lazy mode it wont fetch orders first if call getOrders() then again it will call db and fetch orders
+Eager Mode: if you set fetch= "eager" in @ oneToMany then it will try to fetch the order data from data base even its not required
         
 
 we don't use this ddl from java
 <property name="hbm2ddl.auto">create</property>:
     it will drop and create table so there is a data loss
-<property name="hbm2ddl.auto">update</property>:
+<property name="hbm2ddl.auto">update</property>
     it will create table if does not exist
     else update the data in existing table
 <property name="hbm2ddl.auto">create-drop</property>:

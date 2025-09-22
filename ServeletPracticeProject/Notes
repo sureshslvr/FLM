@@ -1,0 +1,187 @@
+## ✅ What Are Servlets?
+
+Servlets are Java programs that run on a server and handle **web requests** and **responses**.
+They are used to create **dynamic web pages**, often in combination with HTML, CSS, and JavaScript.
+
+---
+
+## ✅ Types of Servlets
+
+### 1. `GenericServlet`
+
+* Older approach
+* Supports multiple protocols
+* Not commonly used today
+
+### 2. `HttpServlet` (Recommended)
+
+* Supports only HTTP protocol
+* Used in almost all modern web applications
+* Provides built-in methods like `doGet()`, `doPost()`, etc.
+
+---
+
+## ✅ Servlet Lifecycle (3 Main Stages)
+
+1. **`init()`** – Called **once** when the servlet is first created
+   Used for **initialization logic** (e.g., setting up DB connections)
+
+2. **`service()`** – Called every time the servlet is requested
+   Delegates the request to methods like:
+
+   * `doGet()` → Read/view data
+   * `doPost()` → Send/save data
+   * `doPut()` → Update existing data
+   * `doDelete()` → Delete data
+
+3. **`destroy()`** – Called when servlet is about to be removed from memory
+   Used to clean up resources (e.g., closing DB connections)
+
+---
+
+## ✅ How Servlet Works (Request-Response Cycle)
+
+```
+Client (Browser)
+     |
+     ↓
+Servlet (Backend Java Code)
+     |
+     ↓
+Response (HTML/JSP/JSON)
+```
+
+* Frontend (HTML form or URL) sends **request** to the servlet
+* Servlet processes it and returns a **response** to the browser
+
+---
+
+## ✅ Writing a Servlet – Step-by-Step
+
+### 1. Extend the `HttpServlet` class
+
+```java
+public class MyServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("text/html");
+        PrintWriter out = resp.getWriter();
+        out.print("Hello from servlet");
+    }
+}
+```
+
+### 2. Configure it in `web.xml`
+
+```xml
+<servlet>
+    <servlet-name>myServlet</servlet-name>
+    <servlet-class>com.MyServlet</servlet-class>
+</servlet>
+
+<servlet-mapping>
+    <servlet-name>myServlet</servlet-name>
+    <url-pattern>/hello</url-pattern>
+</servlet-mapping>
+```
+
+### 3. Or use Annotation (no need for `web.xml`)
+
+```java
+@WebServlet("/hello")
+public class MyServlet extends HttpServlet { ... }
+```
+
+---
+
+## ✅ Folder Structure (Maven Web App)
+
+```
+project-root/
+│
+├── src/
+│   └── main/
+│       ├── java/
+│       │   └── com/example/FirstServlet.java
+│       └── webapp/
+│           ├── index.jsp
+│           └── WEB-INF/
+│               └── web.xml
+│
+└── pom.xml
+```
+
+---
+
+## ✅ `pom.xml` – Required Dependency for Servlet
+
+```xml
+<dependency>
+    <groupId>jakarta.servlet</groupId>
+    <artifactId>jakarta.servlet-api</artifactId>
+    <version>6.0.0</version>
+    <scope>provided</scope>
+</dependency>
+```
+---
+Note: if create project setup from eclipse pom.xml dependency adding not required
+
+## ✅ Creating a Servlet Project
+
+### 🔧 In IntelliJ IDEA (Community Edition):
+
+1. **Create a New Maven Project**
+
+   * Use archetype: `maven-archetype-webapp`
+
+2. **Add `jakarta.servlet-api` dependency** in `pom.xml`
+
+3. **Write Servlet** under `src/main/java/com/`
+
+4. **Add servlet config** in `web.xml` (or use annotations)
+
+5. **Run project:**
+
+   * Build WAR: `mvn clean package`
+   * Deploy WAR to Tomcat: copy `target/yourproject.war` to `tomcat/webapps`
+   * Start Tomcat: `bin/startup.bat` or `startup.sh`
+   * Access: `http://localhost:8080/yourproject/hi`
+
+---
+
+### ⚙️ In Eclipse (Dynamic Web Project):
+
+1. **Go to File → New → Dynamic Web Project**
+2. **Set Target Runtime**: Choose Apache Tomcat
+3. **Add servlet class** in `src/`
+4. **Configure servlet in `web.xml`** (or use annotation)
+5. **Right-click project → Run As → Run on Server**
+
+> Eclipse automatically handles servlet jars when you set a target runtime like Tomcat.
+
+---
+
+## ✅ index.html or index.jsp
+
+Place these in the `webapp/` folder — these are your default web pages.
+
+In `web.xml`, you can define welcome pages:
+
+```xml
+<welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+</welcome-file-list>
+```
+
+---
+
+## ✅ Common Problems & Fixes
+
+| Problem                              | Cause                 | Solution                               |
+| ------------------------------------ | --------------------- | -------------------------------------- |
+| `HttpServlet` not found              | Missing servlet API   | Add `jakarta.servlet-api` in `pom.xml` |
+| Servlet downloads instead of running | Wrong `contentType`   | Use `text/html` not `test/html`        |
+| `.class` not found                   | Project not compiled  | Run `mvn clean package`                |
+| URL not working                      | Wrong servlet mapping | Check `web.xml` or `@WebServlet`       |
+| WAR not deploying                    | Wrong Tomcat path     | Copy WAR to `tomcat/webapps/` folder   |
+
