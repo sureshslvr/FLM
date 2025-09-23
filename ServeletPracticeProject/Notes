@@ -185,3 +185,111 @@ In `web.xml`, you can define welcome pages:
 | URL not working                      | Wrong servlet mapping | Check `web.xml` or `@WebServlet`       |
 | WAR not deploying                    | Wrong Tomcat path     | Copy WAR to `tomcat/webapps/` folder   |
 
+
+## 🚀 Eliminating `web.xml` with Annotations
+
+* Instead of configuring servlets in `web.xml`, we can use the `@WebServlet` annotation.
+* Example:
+
+  ```java
+  @WebServlet("/signup")
+  public class SignUp extends HttpServlet { ... }
+  ```
+* This automatically **registers the servlet** with the given URL mapping (`/signup`).
+* Hence, **we can completely remove `web.xml`** if we use annotations.
+
+---
+
+## 📄 Serving HTML Files with `RequestDispatcher`
+
+* We can **forward a request** to an HTML file using:
+
+  ```java
+  RequestDispatcher rd = req.getRequestDispatcher("signup.html");
+  rd.forward(req, resp);
+  ```
+* Example:
+
+  ```java
+  @WebServlet("/hello")
+  public class Test extends HttpServlet {
+      @Override
+      protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+          RequestDispatcher hello = req.getRequestDispatcher("signup.html");
+          hello.forward(req, resp);
+      }
+  }
+  ```
+* This way, servlet acts as a **controller** that loads HTML or JSP files.
+
+---
+
+## 🔗 Redirecting Pages in HTML
+
+* You can redirect users to different servlet URLs or pages using the `<a>` tag in HTML:
+
+  ```html
+  <a href="hello">signup</a>
+  ```
+
+---
+
+## 📝 Example: `signup.html`
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Signup</title>
+</head>
+<body>
+    <h1>Form Sample</h1>
+    <form action="signup" method="post">
+        <input type="text" name="username">
+        <input type="text" name="password">
+        <input type="submit" value="Signup">
+    </form>
+</body>
+</html>
+```
+
+---
+
+## 📬 Handling Form Data in `doPost()`
+
+* When form is submitted, data is sent to servlet (`/signup`).
+* Example:
+
+  ```java
+  @WebServlet("/signup")
+  public class SignUp extends HttpServlet {
+      @Override
+      protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+          String username = req.getParameter("username");
+          String password = req.getParameter("password");
+          
+          resp.setContentType("text/html");
+          PrintWriter writer = resp.getWriter();
+          writer.append("Hi " + username + ", you are successfully registered!");
+      }
+  }
+  ```
+* Here:
+
+  * `req.getParameter("username")` → fetches form field data.
+  * Response is **written back to the browser**.
+
+---
+
+## 📑 Example: `index.html` with Link
+
+```html
+<html>
+<body>
+    <h2>Hello World!</h2>
+    <a href="hello">signup</a>
+</body>
+</html>
+```
+
