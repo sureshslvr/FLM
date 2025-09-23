@@ -185,6 +185,8 @@ In `web.xml`, you can define welcome pages:
 | URL not working                      | Wrong servlet mapping | Check `web.xml` or `@WebServlet`       |
 | WAR not deploying                    | Wrong Tomcat path     | Copy WAR to `tomcat/webapps/` folder   |
 
+===============================================================================================
+
 
 ## 🚀 Eliminating `web.xml` with Annotations
 
