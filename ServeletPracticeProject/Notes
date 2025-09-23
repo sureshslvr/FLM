@@ -293,3 +293,175 @@ In `web.xml`, you can define welcome pages:
 </html>
 ```
 
+============================================
+
+# ✅ JSP (Java Server Pages) – Notes
+
+## ⚡ Why JSP?
+
+* **HTML → Static pages only** (no dynamic data).
+* **JSP → Java + HTML** → can dynamically generate content at runtime.
+* JSP is mainly used to **render data dynamically** on UI after being processed by a Servlet.
+
+---
+
+## ✅ JSP Lifecycle (similar to Servlet)
+
+1. **JSP page compiled into a Servlet** by the server (first request).
+2. **init()** → JSP servlet initialized once.
+3. **service()** → Handles each request and generates dynamic content.
+4. **destroy()** → JSP servlet removed from memory.
+
+---
+
+## ✅ Key Features of JSP
+
+* Easy to embed **Java code inside HTML**.
+* Supports **dynamic data rendering**.
+* Works well with **Servlets (controller) + JSP (view)** → MVC pattern.
+* Supports different scripting elements.
+
+---
+
+## ✅ JSP Scripting Elements
+
+### 1. **Scriptlet**
+
+* Used to write Java code inside JSP.
+* Syntax:
+
+  ```jsp
+  <% 
+      int a = 10;
+      out.println("Value of a = " + a);
+  %>
+  ```
+
+---
+
+### 2. **Expression**
+
+* Used to directly print values.
+* Syntax:
+
+  ```jsp
+  <%= a %>
+  ```
+* Example:
+
+  ```jsp
+  <%= "Hello JSP!" %>
+  ```
+
+---
+
+### 3. **Directive**
+
+* Provides metadata or instructions to JSP engine.
+* Syntax:
+
+  ```jsp
+  <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+  ```
+* Common Directives:
+
+  * `page` → defines page settings (language, contentType).
+  * `include` → include another JSP/HTML file.
+  * `taglib` → for JSTL or custom tags.
+
+---
+
+## ✅ Example 1 – Simple JSP Page
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>My JSP Page</title>
+</head>
+<body>
+    <h1>Hello from JSP!</h1>
+    <%
+        String message = "This is a dynamic message.";
+        out.println("<p>" + message + "</p>");
+    %>
+    <%= message + " added" %>
+</body>
+</html>
+```
+
+---
+
+## ✅ Example 2 – Servlet Passing Data to JSP
+
+### 🔹 Servlet (`SignUp.java`)
+
+```java
+@WebServlet("/signup")
+public class SignUp extends HttpServlet {
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
+
+        // Pass data to JSP via request attributes
+        req.setAttribute("name", username);
+        req.setAttribute("pass", password);
+
+        RequestDispatcher dispatcher = req.getRequestDispatcher("result.jsp");
+        dispatcher.forward(req, resp);
+    }
+}
+```
+
+### 🔹 JSP (`result.jsp`)
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Result Page</title>
+</head>
+<body>
+    <h1>You are in result JSP page</h1>
+    <%
+        String name = (String) request.getAttribute("name");
+        String password = (String) request.getAttribute("pass");
+    %>
+    <h1>Hi <%= name %>, you have signed up!</h1>
+    <h2>Don’t expose your password: <%= password %></h2>
+</body>
+</html>
+```
+
+---
+
+## ✅ JSP with Servlet – Flow
+
+```
+Client (Form Submission)
+      ↓
+Servlet (Controller)
+      ↓ setAttribute()
+      ↓
+JSP (View) → Renders data dynamically
+```
+
+---
+
+## ✅ Best Practices
+
+* ✅ Use **Servlet for business logic** (e.g., DB operations, request handling).
+* ✅ Use **JSP only for UI rendering**.
+* ❌ Don’t put heavy Java logic inside JSP → makes it messy.
+* ✅ Follow MVC Pattern:
+
+  * **M**odel → Data (Java Beans, DB results)
+  * **V**iew → JSP (UI)
+  * **C**ontroller → Servlet (logic & routing)
+
+---
