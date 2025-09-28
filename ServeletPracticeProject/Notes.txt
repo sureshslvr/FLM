@@ -467,3 +467,16 @@ JSP (View) → Renders data dynamically
   * **C**ontroller → Servlet (logic & routing)
 
 ---
+
+Scopes:
+
+1:Request: it will be availbe once per http request. its like private to the particular server and view.
+	here we will set the data using request,and get the data using same reqest
+
+2:Session: data will be availbe across the session. its like default availbe across the package.
+	here we will set data using session, we get the session by reqest.getSession();
+	and get the data using same session
+
+3:Application/Server: availbe across the server in all the sessions. its like public data.
+	here we will set data using servletContext, we get it by using request.getServletContext();
+	and get the data using same servletContext
