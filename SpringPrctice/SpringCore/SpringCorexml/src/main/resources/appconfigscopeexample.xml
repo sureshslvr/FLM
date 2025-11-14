@@ -23,12 +23,12 @@
     application: One instance per ServletContext.
     websocket: One instance per WebSocket session.
     -->
-    <bean id="emp" class="org.com.Employee" scope="prototype">
+    <bean id="emp" class="com.address.Employee" scope="singleton">
         <property name="id" value="2"/>
         <property name="name" value="suresh" />
         <property name="address" ref="address"></property>
     </bean>
-    <bean id="address" class="org.com.Address">
+    <bean id="address" class="com.address.Address">
         <property name="address" value="${address}"/>
     </bean>
 </beans>

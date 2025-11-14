@@ -10,6 +10,7 @@
         >
     <!--to enable application properties and read the data properties file-->
     <context:property-placeholder location="classpath:application.properties" />
+    <context:annotation-config/>
 
 
     <!--
@@ -21,28 +22,31 @@
     constructor: Spring uses the constructor to inject dependencies by type.
     -->
     <!-- bean definitions-->
-    <bean id="emp" class="org.com.Employee" autowire="byType">
+    <!--<bean id="emp" class="com.address.Employee" autowire="byType">
         <property name="id" value="2"/>
         <property name="name" value="suresh" />
-        <!--<property name="address" ref="address"></property>-->
+        &lt;!&ndash;<property name="address" ref="address"></property>&ndash;&gt;
 
     </bean>
-    <bean id="address" class="org.com.Address" primary="true">
+    <bean id="address" class="com.address.Address" >
         <property name="address" value="=borabanda"/>
-    </bean>
-    <bean id="address1" class="org.com.Address" >
+    </bean>-->
+   <!-- <bean id="address1" class="com.address.Address" >
         <property name="address" value="mothinagar"/>
-    </bean>
+    </bean>-->
 
     <!--constructor-->
     <!--we need to specify the index or type, if 3 variable of constructor is giving by autowire-->
     <!-- bean definitions-->
-    <bean id="emp1" class="org.com.Employee" autowire="constructor">
-        <constructor-arg   index="0" value="2"/>
+    <bean id="address" class="com.address.Address">
+        <constructor-arg value="hightechcity"/>
+    </bean>
+
+    <bean id="emp1" class="com.address.Employee">
+        <constructor-arg index="0" value="2"/>
         <constructor-arg index="1" value="ramesh" />
+        <constructor-arg index="2" ref="address"/>
     </bean>
-    <bean id="address2" class="org.com.Address">
-        <constructor-arg value="=hightechcity"/>
-    </bean>
+
 
 </beans>

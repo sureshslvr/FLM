@@ -1,4 +1,4 @@
-package org.xmlwithautowire;
+package com.xmlwithautowire;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

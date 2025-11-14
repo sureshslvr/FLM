@@ -10,16 +10,17 @@
 ">
     <!--to enable application properties and read the data properties file-->
     <context:property-placeholder location="classpath:application.properties" />
+    <context:annotation-config/>
 
 
 
     <!-- bean definitions-->
-    <bean id="emp" class="org.com.Employee">
+    <bean id="emp" class="com.address.Employee">
         <property name="id" value="2"/>
         <property name="name" value="suresh" />
         <property name="address" ref="address"></property>
     </bean>
-    <bean id="address" class="org.com.Address">
+    <bean id="address" class="com.address.Address">
         <property name="address" value="${address}"/>
     </bean>
 </beans>

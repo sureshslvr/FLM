@@ -1,4 +1,4 @@
-package org.xmlwithautowire;
+package com.xmlwithautowire;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

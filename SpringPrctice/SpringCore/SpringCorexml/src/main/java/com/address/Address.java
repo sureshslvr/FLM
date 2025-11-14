@@ -1,4 +1,4 @@
-package org.com.address;
+package com.address;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,5 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Address {
+
     private String address;
 }

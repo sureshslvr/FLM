@@ -30,7 +30,7 @@ http://www.springframework.org/schema/beans ">
 
 
     <!--address bean used here to demonstrated dependency injection-->
-    <!--<bean id="address" class="org.example.Address">
+    <!--<bean id="address" class="org.example.Address.java">
         <property name="street" value="marketroad"/>
         <property name="area" value="mothiNagar"/>
     </bean>-->

@@ -1,4 +1,4 @@
-package org.com;
+package com.address;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -14,7 +14,7 @@ public class App {
         Employee emp = applicationContext.getBean("emp", Employee.class);
         System.out.println(emp);*/
 
-       /* //scopes example
+        /*//scopes example
         ApplicationContext scopeContext=new ClassPathXmlApplicationContext("appconfigscopeexample.xml");
         Employee emp1 = scopeContext.getBean("emp", Employee.class);
         Employee emp2 = scopeContext.getBean("emp", Employee.class);
@@ -23,11 +23,10 @@ public class App {
 
         //auto wiring example byType and byName
         ApplicationContext applicationContext=new ClassPathXmlApplicationContext("appconfigautowireexample.xml");
-        Employee emp = applicationContext.getBean("emp", Employee.class);
-        System.out.println(emp);
+        /*Employee emp = applicationContext.getBean("emp", Employee.class);
+        System.out.println(emp);*/
         //by constructor
         Employee emp1 = applicationContext.getBean("emp1", Employee.class);
         System.out.println(emp1);
-
     }
 }

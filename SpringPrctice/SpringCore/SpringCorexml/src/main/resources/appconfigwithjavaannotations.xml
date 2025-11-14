@@ -10,13 +10,13 @@
 ">
     <!--to enable application properties and read the data properties file-->
     <context:property-placeholder location="classpath:application.properties" />
-    <context:component-scan base-package="org.xmlwithautowire"/>
+    <context:component-scan base-package="com.xmlwithautowire"/>
     <context:annotation-config></context:annotation-config>
 
 
     <!-- bean definitions-->
-    <bean id="student" class="org.xmlwithautowire.Student">
+    <bean id="student" class="com.xmlwithautowire.Student">
     </bean>
-    <bean id="address" class="org.xmlwithautowire.Address">
+    <bean id="address" class="com.xmlwithautowire.Address">
     </bean>
 </beans>
