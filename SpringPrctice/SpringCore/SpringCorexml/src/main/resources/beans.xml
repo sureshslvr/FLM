@@ -2,7 +2,8 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/beans ">
 
     <!-- Bean definitions go here -
     we will use property tag and constructor-arg setting the values of fields-->
@@ -26,7 +27,6 @@
          dev may forget to add this, we will get null object to address
          to remove this dependency injection problem we will use autowired concept that we can mention in bean&ndash;&gt;
     </bean>-->
-
 
 
     <!--address bean used here to demonstrated dependency injection-->

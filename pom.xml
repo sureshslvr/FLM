@@ -10,6 +10,9 @@
     <packaging>pom</packaging>
     <modules>
         <module>ServeletPracticeProject/WithJavaAnnotation</module>
+        <module>SpringPrctice/SpringJDBC/SpringJdbcXml</module>
+        <module>SpringPrctice/SpringJDBC/SpringJdbcNoXml</module>
+        <module>SpringPrctice/SpringORM/SpringOrm</module>
     </modules>
 
     <properties>

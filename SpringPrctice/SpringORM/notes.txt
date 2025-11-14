@@ -1,0 +1,19 @@
+=============================================================
+Spring ORM:
+
+DataSource->DriverManagerDataSource
+
+SessionFactory->
+	LocalSessionFactory->
+		DataSource
+Transaction Management
+@Transactional
+	begin,commit,close transaction
+	rollback
+
+mysql-connector-j
+spring-context
+spring-orm
+hibernate-core
+
+@EnabletransactionalManagement
