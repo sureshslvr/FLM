@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+          http://www.springframework.org/schema/context
+          http://www.springframework.org/schema/context/spring-context-3.2.xsd
+">
+    <!--to enable application properties and read the data properties file-->
+    <context:property-placeholder location="classpath:application.properties" />
+    <context:component-scan base-package="org.xmlwithautowire"/>
+    <context:annotation-config></context:annotation-config>
+
+
+    <!-- bean definitions-->
+    <bean id="student" class="org.xmlwithautowire.Student">
+    </bean>
+    <bean id="address" class="org.xmlwithautowire.Address">
+    </bean>
+</beans>
