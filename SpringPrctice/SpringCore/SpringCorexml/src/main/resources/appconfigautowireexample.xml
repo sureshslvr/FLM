@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+          http://www.springframework.org/schema/context
+          http://www.springframework.org/schema/context/spring-context-3.2.xsd"
+        >
+    <!--to enable application properties and read the data properties file-->
+    <context:property-placeholder location="classpath:application.properties" />
+
+
+    <!--
+    byName: Spring looks for a bean with the same name as the property and injects it
+            if not found will get null.
+    byType: Spring looks for a bean with the same type as the property and injects it,
+            If multiple beans of the same type exist, it throws an exception.
+            if two beans of same type are there then we can use primary
+    constructor: Spring uses the constructor to inject dependencies by type.
+    -->
+    <!-- bean definitions-->
+    <bean id="emp" class="org.com.Employee" autowire="byType">
+        <property name="id" value="2"/>
+        <property name="name" value="suresh" />
+        <!--<property name="address" ref="address"></property>-->
+
+    </bean>
+    <bean id="address" class="org.com.Address" primary="true">
+        <property name="address" value="=borabanda"/>
+    </bean>
+    <bean id="address1" class="org.com.Address" >
+        <property name="address" value="mothinagar"/>
+    </bean>
+
+    <!--constructor-->
+    <!--we need to specify the index or type, if 3 variable of constructor is giving by autowire-->
+    <!-- bean definitions-->
+    <bean id="emp1" class="org.com.Employee" autowire="constructor">
+        <constructor-arg   index="0" value="2"/>
+        <constructor-arg index="1" value="ramesh" />
+    </bean>
+    <bean id="address2" class="org.com.Address">
+        <constructor-arg value="=hightechcity"/>
+    </bean>
+
+</beans>
