@@ -1,0 +1,305 @@
+# Spring ORM — Step-by-step Markdown Notes
+
+A compact, practical guide to using **Spring + Hibernate (ORM)** with a MySQL datasource. Copy this into a `.md` file and use it as a quick reference.
+
+---
+
+# 1. Goal / overview
+
+Use Spring to manage a JDBC `DataSource` and Hibernate `SessionFactory`, and use Spring transaction management (`@Transactional`) to control transactions declaratively.
+
+Components:
+
+* `DataSource` (connection factory)
+* `LocalSessionFactoryBean` → produces `SessionFactory`
+* `HibernateTransactionManager` (or `JpaTransactionManager` for JPA)
+* `@EnableTransactionManagement` + `@Transactional` for declarative transactions
+* Hibernate entity classes (`@Entity`)
+
+---
+
+# 2. Required Maven dependencies (minimum)
+
+```xml
+<dependencies>
+  <!-- Spring core/context/tx/orm -->
+  <dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-context</artifactId>
+    <version>REPLACE_VERSION</version>
+  </dependency>
+  <dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-orm</artifactId>
+    <version>REPLACE_VERSION</version>
+  </dependency>
+  <dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-tx</artifactId>
+    <version>REPLACE_VERSION</version>
+  </dependency>
+
+  <!-- Hibernate core -->
+  <dependency>
+    <groupId>org.hibernate</groupId>
+    <artifactId>hibernate-core</artifactId>
+    <version>REPLACE_VERSION</version>
+  </dependency>
+
+  <!-- MySQL JDBC driver -->
+  <dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>REPLACE_VERSION</version>
+  </dependency>
+</dependencies>
+```
+
+---
+
+# 3. DataSource
+
+For dev/test use `DriverManagerDataSource`. For production use a connection pool (HikariCP recommended).
+
+```java
+@Bean
+public DataSource dataSource() {
+    DriverManagerDataSource ds = new DriverManagerDataSource();
+    ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
+    ds.setUrl("jdbc:mysql://localhost:3306/mydb?useSSL=false&serverTimezone=UTC");
+    ds.setUsername("dbuser");
+    ds.setPassword("dbpass");
+    return ds;
+}
+```
+
+---
+
+# 4. LocalSessionFactoryBean → SessionFactory (Java config)
+
+`LocalSessionFactoryBean` is the Spring factory bean that configures Hibernate and exposes a `SessionFactory`.
+
+```java
+@Configuration
+@EnableTransactionManagement
+public class HibernateConfig {
+
+    @Bean
+    public LocalSessionFactoryBean sessionFactory(DataSource dataSource) {
+        LocalSessionFactoryBean lsfb = new LocalSessionFactoryBean();
+        lsfb.setDataSource(dataSource);
+        lsfb.setPackagesToScan("com.example.model"); // package with @Entity classes
+
+        Properties props = new Properties();
+        props.put("hibernate.dialect", "org.hibernate.dialect.MySQL8Dialect");
+        props.put("hibernate.show_sql", "true");
+        props.put("hibernate.format_sql", "true");
+        props.put("hibernate.hbm2ddl.auto", "update"); // validate | update | create-drop (use carefully)
+        lsfb.setHibernateProperties(props);
+
+        return lsfb;
+    }
+
+    @Bean
+    public HibernateTransactionManager transactionManager(SessionFactory sessionFactory) {
+        HibernateTransactionManager txMgr = new HibernateTransactionManager();
+        txMgr.setSessionFactory(sessionFactory);
+        return txMgr;
+    }
+}
+```
+
+> Note: `sessionFactory` bean type is `org.hibernate.SessionFactory`. Spring will wire the `LocalSessionFactoryBean` result.
+
+---
+
+# 5. Enable transactions
+
+```java
+@Configuration
+@EnableTransactionManagement
+public class AppConfig { /* beans: dataSource, sessionFactory, txManager */ }
+```
+
+---
+
+# 6. Entity example
+
+```java
+@Entity
+@Table(name = "employee")
+public class Employee {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    private String name;
+    private Double salary;
+
+    // constructors, getters, setters
+}
+```
+
+---
+
+# 7. DAO / Repository pattern (using SessionFactory)
+
+Use `sessionFactory.getCurrentSession()` when transactions are managed by Spring.
+
+```java
+@Repository
+public class EmployeeDao {
+
+    private final SessionFactory sessionFactory;
+
+    public EmployeeDao(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+
+    private Session currentSession() {
+        return sessionFactory.getCurrentSession();
+    }
+
+    public void save(Employee e) {
+        currentSession().save(e);
+    }
+
+    public Employee findById(int id) {
+        return currentSession().get(Employee.class, id);
+    }
+
+    public List<Employee> findAll() {
+        return currentSession()
+            .createQuery("from Employee", Employee.class)
+            .list();
+    }
+
+    public void update(Employee e) {
+        currentSession().update(e);
+    }
+
+    public void delete(int id) {
+        Employee e = findById(id);
+        if (e != null) currentSession().delete(e);
+    }
+}
+```
+
+---
+
+# 8. Service layer + @Transactional
+
+Declare transactions at service methods. By default: runtime exceptions (unchecked) trigger rollback; checked exceptions do not.
+
+```java
+@Service
+public class EmployeeService {
+
+    private final EmployeeDao dao;
+
+    public EmployeeService(EmployeeDao dao) {
+        this.dao = dao;
+    }
+
+    @Transactional
+    public void createEmployee(Employee e) {
+        dao.save(e);
+        // other DB ops in same transaction
+    }
+
+    @Transactional(readOnly = true)
+    public Employee getEmployee(int id) {
+        return dao.findById(id);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void operationThatRollsBackOnCheckedException() throws Exception {
+        // will rollback even for checked Exception because of rollbackFor
+    }
+}
+```
+
+Transaction attributes you may use:
+
+* `propagation` (REQUIRED, REQUIRES_NEW, SUPPORTS, etc.)
+* `isolation` (DEFAULT, READ_COMMITTED, SERIALIZABLE, etc.)
+* `readOnly` (true/false)
+* `timeout` (seconds)
+* `rollbackFor` / `noRollbackFor`
+
+---
+
+# 9. Using `getCurrentSession()` vs `openSession()`
+
+* `getCurrentSession()` participates in Spring-managed transactions and is preferred with `HibernateTransactionManager`.
+* `openSession()` returns a session you must close manually → avoid unless you manage lifecycle yourself.
+
+---
+
+# 10. HQL / Criteria / Native SQL examples
+
+```java
+// HQL
+List<Employee> emps = currentSession()
+    .createQuery("FROM Employee e WHERE e.salary > :s", Employee.class)
+    .setParameter("s", 5000.0)
+    .list();
+
+// Native SQL
+List<Object[]> rows = currentSession()
+    .createNativeQuery("SELECT id, name FROM employee WHERE salary > :s")
+    .setParameter("s", 5000.0)
+    .list();
+```
+
+---
+
+# 11. Transaction boundaries & lifecycle
+
+When using `@Transactional`:
+
+* **Begin**: on method entry (depending on propagation)
+* **Commit**: on successful return
+* **Rollback**: on runtime exception by default, or per `rollbackFor`
+* **Sessions**: `getCurrentSession()` is bound to transaction and closed automatically
+
+---
+
+# 12. Common configuration properties
+
+```properties
+hibernate.dialect = org.hibernate.dialect.MySQL8Dialect
+hibernate.show_sql = true
+hibernate.format_sql = true
+hibernate.hbm2ddl.auto = update  # use carefully in prod
+```
+
+---
+
+# 13. Common pitfalls & tips
+
+1. `getCurrentSession()` fails outside transactions → `No Session` or `Transaction required`. Fix: ensure method is `@Transactional`.
+2. `hbm2ddl.auto=create` will drop/create schema — be careful.
+3. Mixing `EntityManager` (JPA) config with native `SessionFactory` — choose one approach. For JPA prefer `LocalContainerEntityManagerFactoryBean` + `JpaTransactionManager`.
+4. Use connection pooling (Hikari) in production.
+5. Unchecked exceptions cause rollback by default; use `rollbackFor` to include checked exceptions.
+6. Verify dialect matches DB version to avoid SQL differences.
+7. Map lazy associations carefully — `LazyInitializationException` occurs when accessing lazy collections outside active transaction/session.
+
+---
+
+# 14. Quick checklist to get working
+
+1. Add dependencies: spring-context, spring-orm, spring-tx, hibernate-core, mysql driver.
+2. Configure `DataSource` bean.
+3. Configure `LocalSessionFactoryBean` (packagesToScan + hibernate props).
+4. Configure `HibernateTransactionManager`.
+5. Enable transactions with `@EnableTransactionManagement`.
+6. Annotate entity classes with `@Entity`.
+7. Use DAO/Repository that calls `sessionFactory.getCurrentSession()`.
+8. Annotate service methods with `@Transactional`.
+9. Test CRUD flows and transaction rollback behavior.
+
+---
+
+
