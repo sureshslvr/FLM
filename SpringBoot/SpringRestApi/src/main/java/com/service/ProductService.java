@@ -5,6 +5,7 @@ import java.util.List;
 import com.dto.ProductRequestDTO;
 import com.dto.ProductResponseDTO;
 import com.model.Products;
+import org.springframework.http.ResponseEntity;
 
 public interface ProductService {
 	
@@ -13,4 +14,9 @@ public interface ProductService {
 	String saveProduct(ProductRequestDTO dto);
 
     List<ProductResponseDTO> getSimilarProducts(String name);
+
+    ResponseEntity<ProductResponseDTO> getProductByName(String name);
+
+    void removeProduct(Long id);
+
 }

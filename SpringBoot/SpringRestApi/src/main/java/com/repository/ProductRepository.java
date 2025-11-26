@@ -7,9 +7,13 @@ import org.springframework.stereotype.Repository;
 import com.model.Products;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Products, Long>{
 	
-    public List<Products> findByProductNameContaining(String name);
+    List<Products> findByProductNameContaining(String name);
+
+
+    Optional<Products> findByProductName(String name);
 }
